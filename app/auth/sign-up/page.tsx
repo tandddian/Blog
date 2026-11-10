@@ -22,6 +22,10 @@ export default function SignUpPage() {
       password: "",
     },
   });
+
+  function onSubmit() {
+    console.log('123132')
+  }
   return (
     <Card>
       <CardHeader>
@@ -29,12 +33,12 @@ export default function SignUpPage() {
         <CardDescription>Create a new account to get started.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
-          <FieldGroup>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup className="gap-y-4">
             <Controller  control={form.control} name="name" render={({field, fieldState}) => (
               <Field>
                 <FieldLabel>Full Name</FieldLabel>
-                <Input placeholder="tan dian" {...field} />
+                <Input aria-invalid={fieldState.invalid} placeholder="tan dian" {...field} />
                 {
                   fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
                 }
@@ -44,7 +48,7 @@ export default function SignUpPage() {
             <Controller  control={form.control} name="email" render={({field, fieldState}) => (
               <Field>
                 <FieldLabel>Email</FieldLabel>
-                <Input placeholder="tandian@123.com" {...field} />
+                <Input aria-invalid={fieldState.invalid} placeholder="tandian@123.com" {...field} />
                 {
                   fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
                 }
@@ -54,14 +58,14 @@ export default function SignUpPage() {
             <Controller  control={form.control} name="password" render={({field, fieldState}) => (
               <Field>
                 <FieldLabel>Password</FieldLabel>
-                <Input placeholder="******" {...field} />
+                <Input aria-invalid={fieldState.invalid} placeholder="******" {...field} />
                 {
                   fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
                 }
               </Field>
             )}/>
+          <Button type='submit'>Sign Up</Button>
           </FieldGroup>
-          <Button>Sign Up</Button>
         </form>
       </CardContent>
     </Card>
