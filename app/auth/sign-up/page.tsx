@@ -1,8 +1,12 @@
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 export default function SignUpPage() {
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <p>This is a placeholder for the sign-up page.</p>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Sign up</CardTitle>
+        <CardDescription>Create a new account to get started.</CardDescription>
+      </CardHeader>
+    </Card>
   )
 }
