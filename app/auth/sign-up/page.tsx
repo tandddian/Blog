@@ -1,5 +1,6 @@
 "use client"
 import { signUpSchema } from "@/app/schemas/auth";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -60,6 +61,7 @@ export default function SignUpPage() {
               </Field>
             )}/>
           </FieldGroup>
+          <Button>Sign Up</Button>
         </form>
       </CardContent>
     </Card>
