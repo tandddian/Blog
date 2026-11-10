@@ -1,3 +1,4 @@
+"use client"
 import { signUpSchema } from "@/app/schemas/auth";
 import {
   Card,
@@ -29,10 +30,30 @@ export default function SignUpPage() {
       <CardContent>
         <form>
           <FieldGroup>
-            <Controller name="name" render={({field, fieldState}) => (
+            <Controller  control={form.control} name="name" render={({field, fieldState}) => (
               <Field>
                 <FieldLabel>Full Name</FieldLabel>
                 <Input placeholder="tan dian" {...field} />
+                {
+                  fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
+                }
+              </Field>
+            )}/>
+
+            <Controller  control={form.control} name="email" render={({field, fieldState}) => (
+              <Field>
+                <FieldLabel>Email</FieldLabel>
+                <Input placeholder="tandian@123.com" {...field} />
+                {
+                  fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
+                }
+              </Field>
+            )}/>
+
+            <Controller  control={form.control} name="password" render={({field, fieldState}) => (
+              <Field>
+                <FieldLabel>Password</FieldLabel>
+                <Input placeholder="******" {...field} />
                 {
                   fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)
                 }
