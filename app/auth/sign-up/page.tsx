@@ -12,6 +12,8 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
+import z from "zod";
 
 export default function SignUpPage() {
   const form = useForm({
@@ -23,8 +25,12 @@ export default function SignUpPage() {
     },
   });
 
-  function onSubmit() {
-    console.log('123132')
+  async function onSubmit(data: z.infer<typeof signUpSchema>) {
+    await authClient.signUp.email({
+      name: data.name,
+      email: data.email,
+      password: data.password
+    })
   }
   return (
     <Card>
