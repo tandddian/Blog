@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
 import z from "zod";
 
-export default function SignUpPage() {
+export default function SignInPage() {
   const form = useForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
