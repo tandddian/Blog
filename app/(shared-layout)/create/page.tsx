@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { postSchema } from "@/app/schemas/post";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "convex/react";
+import z from "zod";
+import { api } from "@/convex/_generated/api";
+import { useTransition } from "react";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function CreateBlogPage() {
   const form = useForm({
@@ -27,6 +34,20 @@ export default function CreateBlogPage() {
       content: "",
     },
   });
+  const createPost = useMutation(api.posts.createPost);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter()
+
+  function onSubmit(value: z.infer<typeof postSchema>) {
+    startTransition(async function() {
+      await createPost({
+        title: value.title,
+        body: value.content,
+      });
+      router.push('/')
+      toast.success('create success')
+    });
+  }
   return (
     <div className="py-12">
       <div className="text-center mt-4 mb-12">
@@ -41,7 +62,7 @@ export default function CreateBlogPage() {
           <CardDescription>Create a new blog article</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup className="gap-y-4">
               <Controller
                 control={form.control}
@@ -77,7 +98,16 @@ export default function CreateBlogPage() {
                   </Field>
                 )}
               />
-              <Button type="submit">Create</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Loading...</span>
+                  </>
+                ) : (
+                  <span>Create</span>
+                )}
+              </Button>
             </FieldGroup>
           </form>
         </CardContent>
