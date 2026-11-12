@@ -7,9 +7,11 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation'
 
+
 export function Navbar() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter()
+
   return (
     <nav className="w-full py-5 flex items-center justify-between">
       <div className="flex items-center gap-8">
