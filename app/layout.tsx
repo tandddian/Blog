@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ConvexClientProvider } from "@/components/web/ConvexClientProvider";
-import { getToken } from "@/lib/auth-server";
 
 
 const geistSans = Geist({
@@ -21,8 +20,7 @@ export const metadata: Metadata = {
   description: "Next.js Blog",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const token = await getToken();
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
@@ -37,11 +35,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <main className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8">
-            <ConvexClientProvider initialToken={token}>
-
-              {children}
-
-            </ConvexClientProvider>
+            <ConvexClientProvider>{children}</ConvexClientProvider>
           </main>
         </ThemeProvider>
       </body>
