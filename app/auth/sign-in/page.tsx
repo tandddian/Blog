@@ -33,8 +33,8 @@ export default function SignUpPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sign up</CardTitle>
-        <CardDescription>Create a new account to get started.</CardDescription>
+        <CardTitle>Sign in</CardTitle>
+        <CardDescription>Sign in to get start.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
