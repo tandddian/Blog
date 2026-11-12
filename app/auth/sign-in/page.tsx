@@ -13,9 +13,12 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import z from "zod";
 
-export default function SignUpPage() {
+export default function SignInPage() {
+  const router = useRouter()
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -27,7 +30,16 @@ export default function SignUpPage() {
   async function onSubmit(data: z.infer<typeof signInSchema>) {
     await authClient.signIn.email({
       email: data.email,
-      password: data.password
+      password: data.password,
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Signed in successfully");
+          router.push("/")
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+        },
+      },
     })
   }
   return (
