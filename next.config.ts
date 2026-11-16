@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { hostname } from "os";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -15,6 +16,15 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'placecats.com',
+        protocol: 'https',
+        port: ''
+      }
+    ]
+  }
 };
 
 export default nextConfig;
