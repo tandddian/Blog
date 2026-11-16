@@ -6,7 +6,8 @@ import { authComponent } from "./betterAuth/auth";
 export const createPost = mutation({
   args: {
     title: v.string(),
-    body: v.string()
+    body: v.string(),
+    imageStorageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const user = await authComponent.safeGetAuthUser(ctx)
@@ -15,15 +16,16 @@ export const createPost = mutation({
     }
     const newTaskId = await ctx.db.insert("posts", {
       title: args.title,
-      body: args.body, 
-      authorId: user._id
+      body: args.body,
+      authorId: user._id,
+      imageStorageId: args.imageStorageId
     });
     return newTaskId;
   },
 });
 
 export const getPosts = query({
-  args: { },
+  args: {},
   handler: async (ctx) => {
     const posts = await ctx.db
       .query("posts")
@@ -32,3 +34,14 @@ export const getPosts = query({
     return posts;
   },
 });
+
+export const generateImageUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await authComponent.safeGetAuthUser(ctx)
+    if (!user) {
+      throw new ConvexError('Not authenticated')
+    }
+    return await ctx.storage.generateUploadUrl();
+  }
+})

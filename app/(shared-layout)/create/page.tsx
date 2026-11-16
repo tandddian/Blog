@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { postSchema } from "@/app/schemas/post";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,13 +18,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useMutation } from "convex/react";
 import z from "zod";
-import { api } from "@/convex/_generated/api";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { createBlogAction } from "@/app/actions";
 
 export default function CreateBlogPage() {
   const form = useForm({
@@ -32,20 +29,20 @@ export default function CreateBlogPage() {
     defaultValues: {
       title: "",
       content: "",
+      image: undefined
     },
   });
-  const createPost = useMutation(api.posts.createPost);
+  // const createPost = useMutation(api.posts.createPost);
+
   const [isPending, startTransition] = useTransition();
-  const router = useRouter()
 
   function onSubmit(value: z.infer<typeof postSchema>) {
     startTransition(async function() {
-      await createPost({
+      await createBlogAction({
         title: value.title,
-        body: value.content,
+        content: value.content,
+        image: value.image
       });
-      router.push('/')
-      toast.success('create success')
     });
   }
   return (
@@ -69,7 +66,7 @@ export default function CreateBlogPage() {
                 name="title"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>Password</FieldLabel>
+                    <FieldLabel>Title</FieldLabel>
                     <Input
                       aria-invalid={fieldState.invalid}
                       placeholder="title"
@@ -86,7 +83,7 @@ export default function CreateBlogPage() {
                 name="content"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel>Password</FieldLabel>
+                    <FieldLabel>Content</FieldLabel>
                     <Textarea
                       aria-invalid={fieldState.invalid}
                       placeholder="content"
@@ -95,6 +92,16 @@ export default function CreateBlogPage() {
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
+                  </Field>
+                )}
+              />
+                <Controller
+                control={form.control}
+                name="image"
+                render={({ field}) => (
+                  <Field>
+                    <FieldLabel>Image</FieldLabel>
+                    <Input id="image" type="file" accept="image/*" onChange={e => field.onChange(e.target.files?.[0])}  />
                   </Field>
                 )}
               />
