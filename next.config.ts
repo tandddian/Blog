@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         hostname: 'placecats.com',
         protocol: 'https',
         port: ''
+      },
+      {
+        hostname: 'vibrant-mammoth-489.eu-west-1.convex.cloud',
+        protocol: 'https',
+        port: ''
       }
     ]
   }

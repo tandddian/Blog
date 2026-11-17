@@ -33,7 +33,7 @@ async function BlogList() {
         <Card key={article._id} className="pt-0">
           <div className="h-48 w-auto relative">
             <Image
-              src="https://placecats.com/300/200"
+              src={article.imageUrl ?? "https://placecats.com/300/200"}
               alt="image"
               fill
               loading="eager"
