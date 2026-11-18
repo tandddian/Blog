@@ -7,15 +7,18 @@ import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { io } from "next/cache";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cacheLife } from "next/cache";
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  "use cache";
+  cacheLife({ revalidate: 300 })
   return (
     <div className="w-full">
       <div className="px-12 text-center">
         <h1 className="font-bold text-4xl">Our Blog</h1>
         <p className="text-xl text-muted-foreground">Insight, thought</p>
       </div>
-      <Suspense fallback={<BlogListSkeleton/>}>
+      <Suspense fallback={<BlogListSkeleton />}>
         <BlogList />
       </Suspense>
     </div>
@@ -37,6 +40,7 @@ async function BlogList() {
               alt="image"
               fill
               loading="eager"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
           <CardContent>
@@ -67,7 +71,7 @@ function BlogListSkeleton() {
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="flex flex-col space-y-3">
-          <div className="h-48 w-auto" >
+          <div className="h-48 w-auto">
             <Skeleton className="h-48 w-full rounded-xl" />
           </div>
           <div className="space-y-2 flex flex-col">

@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { authComponent } from "./betterAuth/auth";
+import { string } from "better-auth";
 
 // Create a new task with the given text
 export const createPost = mutation({
@@ -53,5 +54,20 @@ export const generateImageUploadUrl = mutation({
       throw new ConvexError('Not authenticated')
     }
     return await ctx.storage.generateUploadUrl();
+  }
+})
+
+export const getPostById = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    const post = await ctx.db.get(args.postId)
+    
+    if (!post) return null
+
+    const resolvedImageUrl = post?.imageStorageId ? await ctx.storage.getUrl(post?.imageStorageId) : null
+    return {
+      ...post,
+      imageUrl: resolvedImageUrl
+    }
   }
 })

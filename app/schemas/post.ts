@@ -3,5 +3,5 @@ import z from 'zod'
 export const postSchema = z.object({
   title: z.string().min(1).max(100),
   content: z.string().min(4),
-  image: z.instanceof(File),
+  image: z.instanceof(File).optional(),
 })
