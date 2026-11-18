@@ -1,8 +1,10 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CommentSection } from "@/components/web/CommentSection";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { ArrowLeft } from "lucide-react";
 import { io } from "next/cache";
 import Image from "next/image";
@@ -17,7 +19,7 @@ interface PostIdRouteProps {
 
 export default async function PostIdPage({ params }: PostIdRouteProps) {
   return (
-    <Suspense fallback={<span>loading...</span>}>
+    <Suspense fallback={<PostSkeleton />}>
       <PostDetail params={params} />
     </Suspense>
   );
@@ -27,6 +29,7 @@ async function PostDetail({ params }: PostIdRouteProps) {
   await io();
   const { postId } = await params;
   const post = await fetchQuery(api.posts.getPostById, { postId: postId });
+  const preloadedComments = await preloadQuery(api.comments.getCommentsByPost, { postId: postId })
   if (!post) {
     return (
       <div>
@@ -68,6 +71,38 @@ async function PostDetail({ params }: PostIdRouteProps) {
         {post.body}
       </p>
       <Separator className="my-8" />
+      <CommentSection preloadedComments={preloadedComments}/>
+    </div>
+  );
+}
+
+function PostSkeleton() {
+  return (
+    <div className="max-w-3xl mx-auto py-3">
+      <Link
+        href={"/blog"}
+        className={buttonVariants({ variant: "ghost", className: "mb-4" })}
+      >
+        <ArrowLeft />
+        Back to blog
+      </Link>
+      <div className="w-full h-100 mb-8 rounded-xl overflow-hidden">
+        <Skeleton className="h-full w-full" />
+      </div>
+
+      <div className="space-y-4 flex flex-col">
+        <Skeleton className=" h-10 w-full" />
+        <Skeleton className=" h-5  w-full" />
+      </div>
+      <Separator className="my-8" />
+      
+      <Skeleton className="h-8  w-full" />
+
+      <Separator className="my-8" />
+      
+      <div className="w-full h-50 mb-8 rounded-xl overflow-hidden">
+        <Skeleton className="h-full w-full" />
+      </div>
     </div>
   );
 }
