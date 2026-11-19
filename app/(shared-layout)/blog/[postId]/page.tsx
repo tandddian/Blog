@@ -28,8 +28,10 @@ export default async function PostIdPage({ params }: PostIdRouteProps) {
 async function PostDetail({ params }: PostIdRouteProps) {
   await io();
   const { postId } = await params;
-  const post = await fetchQuery(api.posts.getPostById, { postId: postId });
-  const preloadedComments = await preloadQuery(api.comments.getCommentsByPost, { postId: postId })
+  const [post, preloadedComments] = await Promise.all([
+    await fetchQuery(api.posts.getPostById, { postId: postId }),
+    await preloadQuery(api.comments.getCommentsByPost, { postId: postId })
+  ])
   if (!post) {
     return (
       <div>
