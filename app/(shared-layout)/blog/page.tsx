@@ -8,6 +8,12 @@ import { Suspense } from "react";
 import { io } from "next/cache";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cacheLife } from "next/cache";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog | Nextjs16",
+  description: "Browse the latest posts and insights on the Next.js 16 blog.",
+};
 
 export default async function BlogPage() {
   "use cache";
