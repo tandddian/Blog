@@ -5,9 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
-import { io } from "next/cache";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,8 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  "use cache";
-  cacheLife({ revalidate: 300 })
+  
   return (
     <div className="w-full">
       <div className="px-12 text-center">
@@ -34,7 +32,9 @@ export default async function BlogPage() {
 async function BlogList() {
   // `fetchQuery` builds a ConvexHttpClient, whose logger calls Math.random().
   // With cacheComponents, that is unstable IO, so opt this part out of the prerender.
-  await io();
+  "use cache";
+  cacheLife("days")
+  cacheTag("blog")
   const data = await fetchQuery(api.posts.getPosts);
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">

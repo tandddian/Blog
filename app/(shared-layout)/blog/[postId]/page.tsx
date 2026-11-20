@@ -35,7 +35,7 @@ interface PostIdRouteProps {
 }
 
 export default async function PostIdPage({ params }: PostIdRouteProps) {
-    await io();
+  await io();
   const { postId } = await params;
   const token = await getToken();
   const [post, preloadedComments, userId] = await Promise.all([
@@ -44,7 +44,7 @@ export default async function PostIdPage({ params }: PostIdRouteProps) {
     await fetchQuery(api.presence.getUserId, {}, { token }),
   ]);
 
-  if (!userId) return redirect("/auth/sign-in")
+  if (!userId) return redirect("/auth/sign-in");
 
   if (!post) {
     return (
@@ -96,4 +96,3 @@ export default async function PostIdPage({ params }: PostIdRouteProps) {
     </div>
   );
 }
-
