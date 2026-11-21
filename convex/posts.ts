@@ -2,7 +2,6 @@ import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { authComponent } from "./betterAuth/auth";
 import { Doc } from "./_generated/dataModel";
-import { title } from "process";
 
 
 // Create a new task with the given text
@@ -95,7 +94,7 @@ export const searchPosts = query({
     const pushDocs = async (docs: Array<Doc<'posts'>>) => {
       for (const doc of docs) {
         if (seen.has(doc._id)) continue
-        seen.add(doc)
+        seen.add(doc._id)
         results.push({
           _id: doc._id,
           title: doc.title,
