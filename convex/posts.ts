@@ -2,6 +2,13 @@ import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { authComponent } from "./betterAuth/auth";
 import { Doc } from "./_generated/dataModel";
+import {
+  POST_BODY_MAX,
+  POST_BODY_MIN,
+  POST_TITLE_MAX,
+  SEARCH_LIMIT_MAX,
+  requireText,
+} from "./validation";
 
 
 // Create a new task with the given text
@@ -16,9 +23,11 @@ export const createPost = mutation({
     if (!user) {
       throw new ConvexError('Not authenticated')
     }
+    const title = requireText(args.title, "Title", 1, POST_TITLE_MAX)
+    const body = requireText(args.body, "Body", POST_BODY_MIN, POST_BODY_MAX)
     const newTaskId = await ctx.db.insert("posts", {
-      title: args.title,
-      body: args.body,
+      title,
+      body,
       authorId: user._id,
       imageStorageId: args.imageStorageId
     });
@@ -87,7 +96,9 @@ export const searchPosts = query({
     limit: v.number(),
   },
   handler: async (ctx, args) => {
-    const { limit } = args
+    const term = args.term.trim()
+    if (!term) return []
+    const limit = Math.min(Math.max(Math.floor(args.limit), 1), SEARCH_LIMIT_MAX)
     const results: Array<SearchResultTypes> = []
     const seen = new Set()
 
@@ -100,13 +111,13 @@ export const searchPosts = query({
           title: doc.title,
           body: doc.body,
         })
-        if (results.length >= args.limit) break
+        if (results.length >= limit) break
       }
     }
 
     const titleMatches = await ctx.db
       .query("posts")
-      .withSearchIndex("search_title", (q) => q.search('title', args.term))
+      .withSearchIndex("search_title", (q) => q.search('title', term))
       .take(limit)
 
     await pushDocs(titleMatches)
@@ -114,7 +125,7 @@ export const searchPosts = query({
     if (results.length < limit) {
       const bodyMatches = await ctx.db
         .query("posts")
-        .withSearchIndex("search_body", (q) => q.search("body", args.term))
+        .withSearchIndex("search_body", (q) => q.search("body", term))
         .take(limit);
 
       await pushDocs(bodyMatches)
