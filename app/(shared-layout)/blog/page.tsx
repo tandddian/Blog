@@ -30,8 +30,7 @@ export default async function BlogPage() {
 }
 
 async function BlogList() {
-  // `fetchQuery` builds a ConvexHttpClient, whose logger calls Math.random().
-  // With cacheComponents, that is unstable IO, so opt this part out of the prerender.
+  // Cached across requests and tagged "blog"; createBlogAction calls updateTag("blog") to expire it.
   "use cache";
   cacheLife("days")
   cacheTag("blog")

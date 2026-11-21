@@ -4,7 +4,7 @@ import z from "zod";
 import { createPostActionSchema } from "./schemas/post";
 import { api } from "@/convex/_generated/api";
 import { fetchMutation } from "convex/nextjs";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { getToken } from "@/lib/auth-server";
 
@@ -33,6 +33,6 @@ export async function createBlogAction(
     return { error: "Failed to create post" };
   }
 
-  revalidatePath("/blog");
+  updateTag("blog");
   return redirect("/blog");
 }
