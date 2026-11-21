@@ -39,9 +39,9 @@ export default async function PostIdPage({ params }: PostIdRouteProps) {
   const { postId } = await params;
   const token = await getToken();
   const [post, preloadedComments, userId] = await Promise.all([
-    await fetchQuery(api.posts.getPostById, { postId: postId }),
-    await preloadQuery(api.comments.getCommentsByPost, { postId: postId }),
-    await fetchQuery(api.presence.getUserId, {}, { token }),
+    fetchQuery(api.posts.getPostById, { postId: postId }),
+    preloadQuery(api.comments.getCommentsByPost, { postId: postId }),
+    fetchQuery(api.presence.getUserId, {}, { token }),
   ]);
 
   if (!userId) return redirect("/auth/sign-in");
