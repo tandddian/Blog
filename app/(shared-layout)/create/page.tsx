@@ -22,6 +22,10 @@ import z from "zod";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { createBlogAction } from "@/app/actions";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
 export default function CreateBlogPage() {
   const form = useForm({
@@ -32,17 +36,40 @@ export default function CreateBlogPage() {
       image: undefined
     },
   });
-  // const createPost = useMutation(api.posts.createPost);
+  const generateImageUploadUrl = useMutation(api.posts.generateImageUploadUrl);
 
   const [isPending, startTransition] = useTransition();
 
   function onSubmit(value: z.infer<typeof postSchema>) {
     startTransition(async function() {
-      await createBlogAction({
+      let imageStorageId: Id<"_storage"> | undefined;
+
+      if (value.image) {
+        try {
+          const uploadUrl = await generateImageUploadUrl();
+          const uploadResult = await fetch(uploadUrl, {
+            method: "POST",
+            headers: { "Content-Type": value.image.type },
+            body: value.image,
+          });
+          if (!uploadResult.ok) throw new Error("Upload failed");
+          const { storageId } = await uploadResult.json();
+          imageStorageId = storageId;
+        } catch {
+          toast.error("Failed to upload image");
+          return;
+        }
+      }
+
+      const result = await createBlogAction({
         title: value.title,
         content: value.content,
-        image: value.image
+        imageStorageId,
       });
+
+      if (result?.error) {
+        toast.error(result.error);
+      }
     });
   }
   return (

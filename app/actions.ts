@@ -1,54 +1,30 @@
 "use server"
 
 import z from "zod";
-import { postSchema } from "./schemas/post";
+import { createPostActionSchema } from "./schemas/post";
 import { api } from "@/convex/_generated/api";
 import { fetchMutation } from "convex/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getToken } from "@/lib/auth-server";
-import { Id } from "@/convex/_generated/dataModel";
 
-export async function createBlogAction(values: z.infer<typeof postSchema>) {
+export async function createBlogAction(
+  values: z.infer<typeof createPostActionSchema>,
+) {
   try {
-    const parsed = postSchema.safeParse(values);
-    let imageStorageId: Id<"_storage"> | undefined;
+    const parsed = createPostActionSchema.safeParse(values);
     if (!parsed.success) {
-      throw new Error("Something went wrong");
+      return { error: "Invalid post data" };
     }
 
     const token = await getToken();
-
-    if (parsed.data.image) {
-
-      const imageUrl = await fetchMutation(
-        api.posts.generateImageUploadUrl,
-        {},
-        { token },
-      );
-
-      const uploadResult = await fetch(imageUrl, {
-        method: "POST",
-        body: parsed.data.image,
-        headers: {
-          "Content-Type": parsed.data.image.type,
-        },
-      });
-
-      if (!uploadResult.ok) {
-        return { error: "Failed to upload image" };
-      }
-
-      const { storageId } = await uploadResult.json();
-      imageStorageId = storageId
-    }
 
     await fetchMutation(
       api.posts.createPost,
       {
         title: parsed.data.title,
         body: parsed.data.content,
-        imageStorageId: imageStorageId,
+        imageStorageId: parsed.data.imageStorageId,
       },
       { token },
     );
