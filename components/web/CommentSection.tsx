@@ -10,21 +10,20 @@ import { Button } from "../ui/button";
 import { Id } from "@/convex/_generated/dataModel";
 import z from "zod";
 import { useTransition } from "react";
-import { Preloaded, useMutation, usePreloadedQuery, useQuery } from "convex/react";
+import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 
 export function CommentSection(props: {
+  postId: Id<"posts">;
   preloadedComments: Preloaded<typeof api.comments.getCommentsByPost>;
 }) {
-  const params = useParams<{ postId: Id<"posts"> }>();
   const form = useForm({
     resolver: zodResolver(commentSchema),
     defaultValues: {
-      postId: params.postId,
+      postId: props.postId,
       body: "",
     },
   });
@@ -47,7 +46,7 @@ export function CommentSection(props: {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-2 border=b">
+      <CardHeader className="flex flex-row items-center gap-2 border-b">
         <MessageSquare className="size-5" />
         <h2 className="text-xl font-bold">{comments?.length} comment(s)</h2>
       </CardHeader>

@@ -92,7 +92,7 @@ export default async function PostIdPage({ params }: PostIdRouteProps) {
         {post.body}
       </p>
       <Separator className="my-8" />
-      <CommentSection preloadedComments={preloadedComments} />
+      <CommentSection postId={postId} preloadedComments={preloadedComments} />
     </div>
   );
 }
